@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Enes Birlik - Software Engineer Portfolio">
-    <meta name="keywords" content="robotics engineer, ROS, ROS2, software development, portfolio">
-    <meta name="author" content="Enes Birlik">
     <title>Enes Birlik - Terminal Portfolio</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap">
     <style>
-        /* Previous CSS styles remain the same */
         * {
             margin: 0;
             padding: 0;
@@ -17,24 +13,125 @@
         }
 
         body {
-            background-color: #300a24;
+            background-color: #1a1a1a;
             color: #ffffff;
             font-family: 'Ubuntu Mono', monospace;
             padding: 20px;
             line-height: 1.6;
         }
 
-        #terminal {
+        .terminal-container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 20px auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .terminal-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .terminal-header {
+            background: #2d2d2d;
+            padding: 8px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-title {
+            color: #ddd;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 10px;
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+
+        .terminal-button {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .terminal-button::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .terminal-button:hover::before {
+            opacity: 1;
+        }
+
+        .minimize {
+            background: #666666;
+        }
+        .minimize::before {
+            content: '';
+            width: 8px;
+            height: 2px;
+            background: #000;
+        }
+
+        .maximize {
+            background: #666666;
+        }
+        .maximize::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border: 1px solid #000;
+        }
+
+        .close {
+            background: #666666;
+        }
+        .close::before {
+            content: '×';
+            color: #000;
+            font-size: 14px;
+            opacity: 0;
+        }
+
+        .close:hover::before {
+            opacity: 1;
+        }
+
+        .terminal {
+            background-color: #300a24;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+            min-height: 200px;
+        }
+
+        .line {
+            display: flex;
+            margin-bottom: 0.5rem;
         }
 
         .prompt {
             color: #4ee44e;
+            margin-right: 10px;
         }
 
         .prompt::before {
@@ -43,49 +140,20 @@
 
         .response {
             color: #ffffff;
-            padding: 5px 0 15px 20px;
             white-space: pre-line;
-        }
-
-        .command {
-            margin-top: 20px;
-        }
-
-        .command-input {
-            background: transparent;
-            border: none;
-            color: #4ee44e;
-            font-family: 'Ubuntu Mono', monospace;
-            font-size: 16px;
-            outline: none;
-            width: calc(100% - 20px);
-            margin-left: 20px;
-        }
-
-        .error {
-            color: #ff0000;
-        }
-
-        .success {
-            color: #4ee44e;
-        }
-
-        a {
-            color: #729fcf;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
         }
 
         .ascii-art {
             color: #4ee44e;
-            font-family: monospace;
             white-space: pre;
         }
 
         .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: #4ee44e;
+            margin-left: 2px;
             animation: blink 1s step-end infinite;
         }
 
@@ -97,14 +165,22 @@
             body {
                 padding: 10px;
             }
+            .prompt::before {
+                content: "visitor:~$ ";
+            }
+            .terminal {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="terminal">
-        <div class="command">
-            <p class="prompt">hello world</p>
-            <div class="response ascii-art">
+    <script>
+        const sections = [
+            {
+                title: "System Information",
+                cmd: "neofetch",
+                response: `
 ███████╗███╗   ██╗███████╗███████╗
 ██╔════╝████╗  ██║██╔════╝██╔════╝
 █████╗  ██╔██╗ ██║█████╗  ███████╗
@@ -116,148 +192,157 @@ OS: Terminal Portfolio
 Host: Mechatronics Engineer
 Kernel: Robotics Developer
 Shell: Portfolio v1.0
-Location: Kocaeli / İzmit
-Theme: Dark Mode
-</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">whoami</p>
-            <div class="response">Enes Birlik
+Location: Kocaeli / İzmit`,
+                isAscii: true
+            },
+            {
+                title: "Basic Information",
+                cmd: "whoami",
+                response: `Enes Birlik
 Mechatronics Engineering Student
-Robotics and Autonomous Systems Developer</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">cat about.txt</p>
-            <div class="response">I have experience in developing robotic solutions and autonomous systems with a focus on ROS/ROS2 framework. Skilled in robotics software development, motion planning, and computer vision implementations. My experience includes leading cross-functional engineering teams and delivering successful projects in both academic and competitive environments.</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">ls experience/</p>
-            <div class="response">• Team Leader @ KOU ROVER (Oct 2024 - Present)
+Robotics and Autonomous Systems Developer`
+            },
+            {
+                title: "About Me",
+                cmd: "cat about.txt",
+                response: `I have experience in developing robotic solutions and autonomous systems with a focus on ROS/ROS2 framework. Skilled in robotics software development, motion planning, and computer vision implementations. My experience includes leading cross-functional engineering teams and delivering successful projects in both academic and competitive environments.`
+            },
+            {
+                title: "Experience",
+                cmd: "ls experience/",
+                response: `• Team Leader @ KOU ROVER (Oct 2024 - Present)
 • Software Engineer Intern @ MARS Autonomous Mobile Robots (Jul 2024 - Aug 2024)
 • Software Team Lead @ KOU ROVER (Sep 2023 - Oct 2024)
-• Team Member @ KOU ROVER (Oct 2021 - Sep 2024)</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">ls skills/</p>
-            <div class="response">• Python, C, C++, C# and MATLAB
+• Team Member @ KOU ROVER (Oct 2021 - Sep 2024)`
+            },
+            {
+                title: "Technical Skills",
+                cmd: "ls skills/",
+                response: `• Python, C, C++, C# and MATLAB
 • ROS framework and Ubuntu systems
 • Microcontroller programming (Arduino, Teensy, ESP32)
 • Basic Electronics and 3D Design Software
 • Photoshop and Video Editing
-• Problem Solving, Teamwork and Time Management</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">cat achievements.txt</p>
-            <div class="response">• TEKNOFEST Digital Technologies in Industry Competition
+• Problem Solving, Teamwork and Time Management`
+            },
+            {
+                title: "Achievements",
+                cmd: "cat achievements.txt",
+                response: `• TEKNOFEST Digital Technologies in Industry Competition
   - First Place (2024)
   - Third Place (2022)
   - Sixth Place (2023)
 • Humanoid Robot Development - TUBITAK 2209A
-  - Project Team Member</div>
-        </div>
-
-        <div class="command">
-            <p class="prompt">cat education.txt</p>
-            <div class="response">• B.S. in Mechatronics Engineering
+  - Project Team Member`
+            },
+            {
+                title: "Education",
+                cmd: "cat education.txt",
+                response: `• B.S. in Mechatronics Engineering
   Kocaeli University (2020 - Present)
   GPA: 3.00
 
 • High School Diploma
   Aldemir Atilla Konuk Anadolu Lisesi (2016 - 2020)
-  Graduation GPA: 92.48</div>
-        </div>
+  Graduation GPA: 92.48`
+            },
+            {
+                title: "Contact Information",
+                cmd: "cat contact.txt",
+                response: `Email: enesbirlik0@gmail.com
+GitHub: github.com/enesbirlik
+Location: Kocaeli / İzmit, Antalya / Muratpaşa`
+            }
+        ];
 
-        <div class="command">
-            <p class="prompt">cat contact.txt</p>
-            <div class="response">Email: enesbirlik0@gmail.com
-Phone: +90 538 555 5844
-GitHub: <a href="https://github.com/enesbirlik" target="_blank">github.com/enesbirlik</a>
-Location: Kocaeli / İzmit, Antalya / Muratpaşa</div>
-        </div>
+        function createTerminal(section) {
+            const container = document.createElement('div');
+            container.className = 'terminal-container';
 
-        <div class="command">
-            <p class="prompt">help</p>
-            <div class="response">Available commands:
-• neofetch - System information
-• whoami - Basic information
-• cat about.txt - About me
-• ls experience/ - Work experience
-• ls skills/ - Technical skills
-• cat achievements.txt - Achievements
-• cat education.txt - Education
-• cat contact.txt - Contact information
-• clear - Clear screen (Ctrl+L)
-• help - Show this menu</div>
-        </div>
+            const header = document.createElement('div');
+            header.className = 'terminal-header';
+            
+            const title = document.createElement('div');
+            title.className = 'terminal-title';
+            title.textContent = section.title;
 
-        <div class="command">
-            <p class="prompt"><span class="cursor">█</span></p>
-        </div>
-    </div>
+            const buttons = document.createElement('div');
+            buttons.className = 'terminal-buttons';
+            buttons.innerHTML = `
+                <div class="terminal-button minimize"></div>
+                <div class="terminal-button maximize"></div>
+                <div class="terminal-button close"></div>
+            `;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const terminal = document.getElementById('terminal');
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'command-input';
-            input.autofocus = true;
+            header.appendChild(title);
+            header.appendChild(buttons);
 
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    processCommand(this.value);
-                    this.value = '';
+            const terminal = document.createElement('div');
+            terminal.className = 'terminal';
+
+            container.appendChild(header);
+            container.appendChild(terminal);
+            document.body.appendChild(container);
+
+            return terminal;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function typeText(element, text, speed = 30) {
+            for (let char of text) {
+                element.textContent += char;
+                await sleep(speed);
+            }
+        }
+
+        async function addLine(terminal, command, response, isAscii = false) {
+            const cmdLine = document.createElement('div');
+            cmdLine.className = 'line';
+            
+            const prompt = document.createElement('span');
+            prompt.className = 'prompt';
+            
+            const cmd = document.createElement('span');
+            cmd.style.color = '#4ee44e';
+            
+            cmdLine.appendChild(prompt);
+            cmdLine.appendChild(cmd);
+            terminal.appendChild(cmdLine);
+            
+            await typeText(cmd, command);
+            await sleep(500);
+
+            if (response) {
+                const responseLine = document.createElement('div');
+                responseLine.className = isAscii ? 'ascii-art' : 'response';
+                terminal.appendChild(responseLine);
+                await typeText(responseLine, response, isAscii ? 0 : 10);
+            }
+        }
+
+        async function initializeTerminals() {
+            for (const section of sections) {
+                const terminal = createTerminal(section);
+                await sleep(500);
+                terminal.parentElement.classList.add('visible');
+                await addLine(terminal, section.cmd, section.response, section.isAscii);
+                await sleep(500);
+            }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
             });
+        }, { threshold: 0.1 });
 
-            terminal.querySelector('.command:last-child').appendChild(input);
-        });
-
-        function processCommand(cmd) {
-            const commands = {
-                'neofetch': showSystemInfo,
-                'whoami': showAboutMe,
-                'ls': showDirectory,
-                'cat': showFileContent,
-                'clear': clearTerminal,
-                'help': showHelp
-            };
-
-            const args = cmd.trim().split(' ');
-            const command = args[0].toLowerCase();
-
-            if (commands[command]) {
-                commands[command](args);
-            } else {
-                addResponse(`Command not found: ${command}. Type 'help' for available commands.`, 'error');
-            }
-        }
-
-        function clearTerminal() {
-            const terminal = document.getElementById('terminal');
-            const lastPrompt = terminal.lastElementChild;
-            terminal.innerHTML = '';
-            terminal.appendChild(lastPrompt);
-        }
-
-        function addResponse(text, className = '') {
-            const terminal = document.getElementById('terminal');
-            const responseDiv = document.createElement('div');
-            responseDiv.className = `response ${className}`;
-            responseDiv.textContent = text;
-            terminal.insertBefore(responseDiv, terminal.lastElementChild);
-        }
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'l' && event.ctrlKey) {
-                clearTerminal();
-                event.preventDefault();
-            }
+        window.addEventListener('load', () => {
+            initializeTerminals();
         });
     </script>
 </body>
