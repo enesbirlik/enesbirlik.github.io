@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enes Birlik - Software Engineer Portfolio">
+    <meta name="keywords" content="robotics engineer, ROS, ROS2, software development, portfolio">
+    <meta name="author" content="Enes Birlik">
+    <title>Enes Birlik - Terminal Portfolio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap">
+    <style>
+        /* Previous CSS styles remain the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #300a24;
+            color: #ffffff;
+            font-family: 'Ubuntu Mono', monospace;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        #terminal {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .prompt {
+            color: #4ee44e;
+        }
+
+        .prompt::before {
+            content: "visitor@enesbirlik:~$ ";
+        }
+
+        .response {
+            color: #ffffff;
+            padding: 5px 0 15px 20px;
+            white-space: pre-line;
+        }
+
+        .command {
+            margin-top: 20px;
+        }
+
+        .command-input {
+            background: transparent;
+            border: none;
+            color: #4ee44e;
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 16px;
+            outline: none;
+            width: calc(100% - 20px);
+            margin-left: 20px;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        .success {
+            color: #4ee44e;
+        }
+
+        a {
+            color: #729fcf;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .ascii-art {
+            color: #4ee44e;
+            font-family: monospace;
+            white-space: pre;
+        }
+
+        .cursor {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div class="command">
+            <p class="prompt">hello world</p>
+            <div class="response ascii-art">
+███████╗███╗   ██╗███████╗███████╗
+██╔════╝████╗  ██║██╔════╝██╔════╝
+█████╗  ██╔██╗ ██║█████╗  ███████╗
+██╔══╝  ██║╚██╗██║██╔══╝  ╚════██║
+███████╗██║ ╚████║███████╗███████║
+╚══════╝╚═╝  ╚═══╝╚══════╝╚══════╝
+----------------------------------
+OS: Terminal Portfolio
+Host: Mechatronics Engineer
+Kernel: Robotics Developer
+Shell: Portfolio v1.0
+Location: Kocaeli / İzmit
+Theme: Dark Mode
+</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">whoami</p>
+            <div class="response">Enes Birlik
+Mechatronics Engineering Student
+Robotics and Autonomous Systems Developer</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">cat about.txt</p>
+            <div class="response">I have experience in developing robotic solutions and autonomous systems with a focus on ROS/ROS2 framework. Skilled in robotics software development, motion planning, and computer vision implementations. My experience includes leading cross-functional engineering teams and delivering successful projects in both academic and competitive environments.</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">ls experience/</p>
+            <div class="response">• Team Leader @ KOU ROVER (Oct 2024 - Present)
+• Software Engineer Intern @ MARS Autonomous Mobile Robots (Jul 2024 - Aug 2024)
+• Software Team Lead @ KOU ROVER (Sep 2023 - Oct 2024)
+• Team Member @ KOU ROVER (Oct 2021 - Sep 2024)</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">ls skills/</p>
+            <div class="response">• Python, C, C++, C# and MATLAB
+• ROS framework and Ubuntu systems
+• Microcontroller programming (Arduino, Teensy, ESP32)
+• Basic Electronics and 3D Design Software
+• Photoshop and Video Editing
+• Problem Solving, Teamwork and Time Management</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">cat achievements.txt</p>
+            <div class="response">• TEKNOFEST Digital Technologies in Industry Competition
+  - First Place (2024)
+  - Third Place (2022)
+  - Sixth Place (2023)
+• Humanoid Robot Development - TUBITAK 2209A
+  - Project Team Member</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">cat education.txt</p>
+            <div class="response">• B.S. in Mechatronics Engineering
+  Kocaeli University (2020 - Present)
+  GPA: 3.00
+
+• High School Diploma
+  Aldemir Atilla Konuk Anadolu Lisesi (2016 - 2020)
+  Graduation GPA: 92.48</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">cat contact.txt</p>
+            <div class="response">Email: enesbirlik0@gmail.com
+Phone: +90 538 555 5844
+GitHub: <a href="https://github.com/enesbirlik" target="_blank">github.com/enesbirlik</a>
+Location: Kocaeli / İzmit, Antalya / Muratpaşa</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt">help</p>
+            <div class="response">Available commands:
+• neofetch - System information
+• whoami - Basic information
+• cat about.txt - About me
+• ls experience/ - Work experience
+• ls skills/ - Technical skills
+• cat achievements.txt - Achievements
+• cat education.txt - Education
+• cat contact.txt - Contact information
+• clear - Clear screen (Ctrl+L)
+• help - Show this menu</div>
+        </div>
+
+        <div class="command">
+            <p class="prompt"><span class="cursor">█</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminal = document.getElementById('terminal');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'command-input';
+            input.autofocus = true;
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    processCommand(this.value);
+                    this.value = '';
+                }
+            });
+
+            terminal.querySelector('.command:last-child').appendChild(input);
+        });
+
+        function processCommand(cmd) {
+            const commands = {
+                'neofetch': showSystemInfo,
+                'whoami': showAboutMe,
+                'ls': showDirectory,
+                'cat': showFileContent,
+                'clear': clearTerminal,
+                'help': showHelp
+            };
+
+            const args = cmd.trim().split(' ');
+            const command = args[0].toLowerCase();
+
+            if (commands[command]) {
+                commands[command](args);
+            } else {
+                addResponse(`Command not found: ${command}. Type 'help' for available commands.`, 'error');
+            }
+        }
+
+        function clearTerminal() {
+            const terminal = document.getElementById('terminal');
+            const lastPrompt = terminal.lastElementChild;
+            terminal.innerHTML = '';
+            terminal.appendChild(lastPrompt);
+        }
+
+        function addResponse(text, className = '') {
+            const terminal = document.getElementById('terminal');
+            const responseDiv = document.createElement('div');
+            responseDiv.className = `response ${className}`;
+            responseDiv.textContent = text;
+            terminal.insertBefore(responseDiv, terminal.lastElementChild);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'l' && event.ctrlKey) {
+                clearTerminal();
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
