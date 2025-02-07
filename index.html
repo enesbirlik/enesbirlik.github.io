@@ -157,6 +157,20 @@
             animation: blink 1s step-end infinite;
         }
 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #4ee44e;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @keyframes blink {
             50% { opacity: 0; }
         }
@@ -166,12 +180,56 @@
                 padding: 10px;
             }
             .prompt::before {
-                content: "visitor:~$ ";
+                content: "visitor@:~$ ";
             }
             .terminal {
                 padding: 10px;
             }
+
+            .matrix-effect {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: black;
+                z-index: 1000;
+                display: none;
+                font-family: 'Courier New', monospace;
+                color: #0F0;
+                font-size: 14px;
+            }
         }
+
+
+        @media (max-width: 480px) {
+            .terminal {
+                font-size: 14px;
+            }
+            
+            .ascii-art {
+                font-size: 8px;
+            }
+            
+            .terminal-container {
+                margin: 10px 5px;
+            }
+            
+            .prompt::before {
+                content: "$";
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: #f0f0f0;
+            }
+            
+            .terminal {
+                background-color: #2d2d2d;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -247,12 +305,34 @@ Robotics and Autonomous Systems Developer`
   Graduation GPA: 92.48`
             },
             {
-                title: "Contact Information",
-                cmd: "cat contact.txt",
-                response: `Email: enesbirlik0@gmail.com
-GitHub: github.com/enesbirlik
-Location: Kocaeli / İzmit, Antalya / Muratpaşa`
-            }
+    title: "Contact Information",
+    cmd: "cat contact.txt",
+    response: `Email: enesbirlik0@gmail.com
+            GitHub: <a href="https://github.com/enesbirlik" target="_blank" style="color: #4ee44e; text-decoration: none;">github.com/enesbirlik</a>
+            LinkedIn: <a href="https://linkedin.com/in/enes-birlik" target="_blank" style="color: #4ee44e; text-decoration: none;">linkedin.com/in/enes-birlik</a>
+            Location: Kocaeli / İzmit, Antalya / Muratpaşa`
+            },
+
+            {
+                title: "Projects",
+                cmd: "ls projects/",
+                response: `• KOU ROVER (2021-Present)
+            - Role: Team Leader & Software Lead
+            - Tech: ROS2, Python, C++
+            - Details: Autonomous navigation, computer vision, robotic arm, motion control, simulation, robot modeling 
+
+            • Humanoid Robot Project
+            - Role: Team Member
+            - Tech: Teensy, C++, servo motor control, 3D printing
+            - Status: TUBITAK 2209A Funded
+
+            • Celestial Tracker Project
+            - Role: Developer
+            - Tech: Esp32, Python, PIC16F877A
+
+`
+            },
+
         ];
 
         function createTerminal(section) {
@@ -291,12 +371,18 @@ Location: Kocaeli / İzmit, Antalya / Muratpaşa`
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        async function typeText(element, text, speed = 30) {
+        async function typeText(element, text, speed = 0.00001) {
+        if (text.includes('<a href=')) {
+            // HTML içeriği varsa innerHTML kullan
+            element.innerHTML = text;
+        } else {
+            // Normal metin için karakter karakter yaz
             for (let char of text) {
                 element.textContent += char;
                 await sleep(speed);
             }
         }
+}
 
         async function addLine(terminal, command, response, isAscii = false) {
             const cmdLine = document.createElement('div');
@@ -344,6 +430,138 @@ Location: Kocaeli / İzmit, Antalya / Muratpaşa`
         window.addEventListener('load', () => {
             initializeTerminals();
         });
+
+        
+        const commandHistory = [];
+        let historyIndex = -1;
+        const availableCommands = ['neofetch', 'whoami', 'ls', 'cat', 'clear', 'help', 'projects', 'skills'];
+        
+        document.addEventListener('keydown', function(e) {
+            const input = document.querySelector('.command-input');
+            
+            if (e.key === 'ArrowUp') {
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    input.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                }
+                e.preventDefault();
+            }
+            
+            if (e.key === 'ArrowDown') {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    input.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                } else {
+                    historyIndex = -1;
+                    input.value = '';
+                }
+                e.preventDefault();
+            }
+            
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const partial = input.value;
+                const matches = availableCommands.filter(cmd => cmd.startsWith(partial));
+                if (matches.length === 1) {
+                    input.value = matches[0];
+                }
+            }
+        });
+
+        function startMatrixEffect() {
+            const matrixDiv = document.createElement('div');
+            matrixDiv.className = 'matrix-effect';
+            document.body.appendChild(matrixDiv);
+            matrixDiv.style.display = 'block';
+            
+            const chars = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789";
+            const columns = Math.floor(window.innerWidth / 14);
+            const drops = Array(columns).fill(1);
+            
+            const ctx = document.createElement('canvas').getContext('2d');
+            matrixDiv.appendChild(ctx.canvas);
+            ctx.canvas.width = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#0F0';
+                ctx.font = '14px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * 14, drops[i] * 14);
+                    if (drops[i] * 14 > ctx.canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            const matrixInterval = setInterval(draw, 33);
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                matrixDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function processCommand(command, terminal, inputLine) {
+            const response = document.createElement('div');
+            response.className = 'response';
+
+            switch (command.toLowerCase()) {
+                case 'help':
+                    response.textContent = `Available commands:
+        • help - Show this help message
+        • clear - Clear the terminal
+        • ls projects - List my projects
+        • cat certifications - Show my certifications
+        • sudo make coffee - Try to make coffee
+        • about - About me
+        • skills - List my skills
+        • contact - Contact information`;
+                    break;
+                case 'ls projects':
+                    response.innerHTML = `• KOU ROVER (2021-Present)
+        - Role: Team Leader & Software Lead
+        - Tech: ROS2, Python, C++
+        - Details: Autonomous navigation, computer vision
+
+        • Humanoid Robot Project
+        - Role: Team Member
+        - Tech: Arduino, C++, 3D Printing
+        - Status: TUBITAK 2209A Funded
+
+        • Terminal Portfolio
+        - Tech: HTML, CSS, JavaScript
+        - Source: github.com/enesbirlik/portfolio`;
+                    break;
+                case 'cat certifications':
+                    response.textContent = `• ROS2 Development (Udemy)
+        • Python Programming (Coursera)
+        • C++ Fundamentals (SoloLearn)
+        • Linux System Administration (Linux Foundation)`;
+                    break;
+                case 'sudo make coffee':
+                    response.innerHTML = `Error: Coffee maker not found
+        Could not make coffee: Hardware limitation
+        Please visit nearest coffee shop for caffeine needs ☕`;
+                    break;
+                case 'clear':
+                    while (terminal.firstChild !== inputLine) {
+                        terminal.removeChild(terminal.firstChild);
+                    }
+                    return;
+                default:
+                    response.textContent = `Command not found: ${command}. Type 'help' for available commands.`;
+            }
+
+            terminal.insertBefore(response, inputLine);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        
     </script>
 </body>
 </html>
