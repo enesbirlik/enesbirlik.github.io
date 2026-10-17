@@ -12,6 +12,58 @@
     try { localStorage.setItem("theme", next); } catch (e) {}
   });
 
+  /* ---------- Language (EN in HTML, TR from i18n.js) ---------- */
+  var TR = window.I18N_TR || {};
+  var CV = { en: "assets/cv/Enes_Birlik_CV.pdf", tr: "assets/cv/Enes_Birlik_CV_TR.pdf" };
+  var TITLE = { en: document.title, tr: "Enes Birlik — Robotik Yazılım Mühendisi" };
+  var lang = "en";
+
+  // Snapshot every translatable text node once, keeping surrounding whitespace
+  var i18nNodes = [];
+  (function collect() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (n.parentElement.closest("script, style, svg, pre, .term-line")) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n;
+    while ((n = walker.nextNode())) {
+      var raw = n.nodeValue;
+      var key = raw.replace(/\s+/g, " ").trim();
+      if (key && TR[key]) {
+        i18nNodes.push({ node: n, en: key, lead: raw.match(/^\s*/)[0], trail: raw.match(/\s*$/)[0] });
+      }
+    }
+  })();
+
+  var langBtn = document.getElementById("lang-toggle");
+  function setLang(next) {
+    lang = next === "tr" ? "tr" : "en";
+    i18nNodes.forEach(function (item) {
+      item.node.nodeValue = item.lead + (lang === "tr" ? TR[item.en] : item.en) + item.trail;
+    });
+    root.setAttribute("lang", lang);
+    document.title = TITLE[lang];
+    document.querySelectorAll('a[href="' + CV.en + '"], a[href="' + CV.tr + '"]').forEach(function (a) {
+      a.setAttribute("href", CV[lang]);
+    });
+    langBtn.textContent = lang === "tr" ? "EN" : "TR";
+    langBtn.setAttribute("aria-label", lang === "tr" ? "Switch to English" : "Türkçe'ye geç");
+  }
+
+  var initialLang = null;
+  var param = new URLSearchParams(location.search).get("lang");
+  if (param === "tr" || param === "en") initialLang = param;
+  if (!initialLang) { try { initialLang = localStorage.getItem("lang"); } catch (e) {} }
+  if (!initialLang) initialLang = /^tr\b/i.test(navigator.language || "") ? "tr" : "en";
+  if (initialLang === "tr") setLang("tr");
+
+  langBtn.addEventListener("click", function () {
+    setLang(lang === "tr" ? "en" : "tr");
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  });
+
   /* ---------- Mobile menu ---------- */
   var nav = document.getElementById("nav");
   var menuBtn = document.getElementById("menu-toggle");
@@ -182,8 +234,8 @@
         'linkedin: <a href="https://linkedin.com/in/enes-birlik" target="_blank" rel="noopener">linkedin.com/in/enes-birlik</a>';
     },
     resume: function () {
-      window.open("assets/cv/Enes_Birlik_CV.pdf", "_blank", "noopener");
-      return 'Opening <span class="c">Enes_Birlik_CV.pdf</span> …';
+      window.open(CV[lang], "_blank", "noopener");
+      return 'Opening <span class="c">' + CV[lang].split("/").pop() + '</span> …';
     },
     "ros2 topic list": function () {
       return '/cmd_vel\n/odom\n/scan\n/tf\n/zed2/point_cloud\n/move_group/goal\n/so101/joint_states   <span class="a">(coming soon)</span>\n/coffee_level        <span class="r">(critically low)</span>';

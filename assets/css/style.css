@@ -137,6 +137,7 @@ a:hover { text-decoration: underline; }
 }
 .icon-btn:hover { color: var(--green); border-color: var(--green); }
 .icon-btn svg { width: 18px; height: 18px; }
+.lang-toggle { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .04em; }
 .theme-toggle .sun { display: none; }
 :root[data-theme="light"] .theme-toggle .sun { display: block; }
 :root[data-theme="light"] .theme-toggle .moon { display: none; }
