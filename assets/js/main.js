@@ -259,8 +259,7 @@
     theme: function () { themeBtn.click(); return "Theme switched."; },
     exit: function () { return "There is no escape. Try <span class=\"c\">contact</span> instead 🙂"; },
     pwd: function () { return "/home/visitor"; },
-    date: function () { return new Date().toString(); },
-    "rm -rf /": function () { return '<span class="r">Nice try.</span> Permission denied.'; }
+    date: function () { return new Date().toString(); }
   };
   var aliases = { cv: "resume", about: "whoami", "ls projects": "projects", "cat contact.txt": "contact", email: "contact" };
   var completions = Object.keys(commands).concat(Object.keys(aliases), ["clear"]);
@@ -291,10 +290,128 @@
     body.scrollTop = body.scrollHeight;
   }
 
+  /* ---------- Easter egg: rm -rf /* ---------- */
+  var NUKE_RE = /^(sudo )?rm (-rf|-fr|-r -f|-f -r|-Rf|-fR)( --no-preserve-root)? \/\*?$/;
+  var nuking = false;
+
+  var NUKE_TEXT = {
+    en: {
+      title: "Just kidding.",
+      body: "Nothing was deleted. This is a static website, so there's nothing here to rm.",
+      note: "Please don't try that on a real robot though.",
+      button: "Restore system",
+      restored: '<span class="g">[OK]</span> System restored. 0 files deleted. Nice try 🙂'
+    },
+    tr: {
+      title: "Şakaydı.",
+      body: "Hiçbir şey silinmedi. Burası statik bir site, silinecek bir şey yok.",
+      note: "Ama bunu gerçek bir robotta deneme lütfen.",
+      button: "Sistemi geri yükle",
+      restored: '<span class="g">[OK]</span> Sistem geri yüklendi. 0 dosya silindi. İyi denemeydi 🙂'
+    }
+  };
+
+  var NUKE_PATHS = [
+    "/usr/bin/ros2", "/opt/ros/humble/setup.bash", "/home/enes/ros2_ws/src", "/home/enes/kou_rover/nav2_params.yaml",
+    "/home/enes/so101/calibration.json", "/etc/teknofest/trophies", "/var/lib/coffee", "/assets/cv/Enes_Birlik_CV.pdf",
+    "/assets/img/rover-teknofest.jpg", "/assets/css/style.css", "/assets/js/main.js", "/index.html"
+  ];
+
+  function nuke(cmd) {
+    if (nuking) return;
+    nuking = true;
+    input.disabled = true;
+    var t = NUKE_TEXT[lang];
+    var fast = reduceMotion ? 0.35 : 1;
+    print(cmd, null);
+
+    // 1) Fake deletion log in the terminal while page sections vanish
+    var parts = Array.prototype.slice.call(document.querySelectorAll("main section:not(.hero), .telemetry, footer, .nav-links"));
+    document.body.classList.add("nuking");
+    NUKE_PATHS.forEach(function (p, i) {
+      setTimeout(function () {
+        var out = document.createElement("pre");
+        out.className = "term-out";
+        out.innerHTML = "removed <span class=\"r\">'" + p + "'</span>";
+        body.insertBefore(out, inputLine);
+        body.scrollTop = body.scrollHeight;
+        if (parts[i]) parts[i].classList.add("nuked");
+      }, i * 90 * fast);
+    });
+
+    // 2) Screen dies → kernel panic
+    setTimeout(function () {
+      var screen = document.createElement("div");
+      screen.className = "nuke-screen flicker";
+      screen.setAttribute("role", "alert");
+      screen.innerHTML = '<pre class="nuke-log"></pre>';
+      document.body.appendChild(screen);
+      document.body.style.overflow = "hidden";
+      var log = screen.querySelector(".nuke-log");
+      var lines = [
+        "[   42.133700] rm: cannot remove '/proc': Device or resource busy",
+        "[   42.133742] systemd[1]: Caught &lt;SEGV&gt;, core dump failed.",
+        '<span class="r">[   42.133801] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009</span>',
+        "[   42.133802] CPU: 0 PID: 1 Comm: portfolio Not tainted 6.14.0-enesbirlik",
+        "[   42.133803] Call Trace: rover_nav2+0x1f / moveit2_plan+0x42 / coffee_maker+0xdead",
+        '<span class="r">[   42.133810] ---[ end Kernel panic - not syncing ]---</span>',
+        "",
+        "enesbirlik.github.io: No such file or directory",
+        ""
+      ];
+      lines.forEach(function (l, i) {
+        setTimeout(function () {
+          log.innerHTML = lines.slice(0, i + 1).join("\n") + (i === lines.length - 1 ? '<span class="cursor"></span>' : "");
+        }, i * 220 * fast);
+      });
+
+      // 3) Reveal the joke, then restore
+      var restoreTimer;
+      function restore() {
+        clearTimeout(restoreTimer);
+        document.removeEventListener("keydown", onKey);
+        screen.remove();
+        document.body.style.overflow = "";
+        parts.forEach(function (el) { el.classList.remove("nuked"); });
+        setTimeout(function () { document.body.classList.remove("nuking"); }, 400);
+        var out = document.createElement("pre");
+        out.className = "term-out";
+        out.innerHTML = t.restored;
+        body.insertBefore(out, inputLine);
+        body.scrollTop = body.scrollHeight;
+        input.disabled = false;
+        input.focus({ preventScroll: true });
+        nuking = false;
+      }
+      function showJoke() {
+        if (screen.querySelector(".nuke-joke")) return;
+        var joke = document.createElement("div");
+        joke.className = "nuke-joke";
+        joke.innerHTML = '<div class="nuke-card"><div class="big">😄</div><h2></h2><p class="b"></p><p class="dim"></p><button class="btn btn-primary" type="button"></button></div>';
+        joke.querySelector("h2").textContent = t.title;
+        joke.querySelector(".b").textContent = t.body;
+        joke.querySelector(".dim").textContent = t.note;
+        var btn = joke.querySelector("button");
+        btn.textContent = t.button;
+        btn.addEventListener("click", restore);
+        screen.appendChild(joke);
+        btn.focus();
+        restoreTimer = setTimeout(restore, 7000);
+      }
+      function onKey(e) {
+        if (e.key !== "Escape") return;
+        if (screen.querySelector(".nuke-joke")) restore(); else showJoke();
+      }
+      document.addEventListener("keydown", onKey);
+      setTimeout(showJoke, (lines.length * 220 + 2600) * fast);
+    }, NUKE_PATHS.length * 90 * fast + 300);
+  }
+
   function run(raw) {
     var cmd = raw.trim().replace(/\s+/g, " ");
     if (cmd) { history.push(cmd); }
     hIndex = -1;
+    if (NUKE_RE.test(cmd)) { nuke(cmd); return; }
     var key = cmd.toLowerCase();
     if (aliases[key]) key = aliases[key];
     if (key === "clear") {

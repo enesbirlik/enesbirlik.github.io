@@ -564,3 +564,37 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   .timeline::before { left: 7px; }
   .nav-actions .btn-sm .label { display: none; }
 }
+
+/* ---------- Easter egg: rm -rf /* ---------- */
+.nuking main section, .nuking .telemetry, .nuking footer, .nuking .nav-links {
+  transition: opacity .35s ease, transform .35s ease, filter .35s ease;
+}
+.nuked { opacity: 0 !important; transform: translateY(24px) skewX(-4deg); filter: blur(2px); }
+.nuke-screen {
+  position: fixed; inset: 0; z-index: 300;
+  background: #000; color: #c8c8c8;
+  font-family: var(--mono); font-size: 14px; line-height: 1.5;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px 24px;
+  overflow: hidden;
+}
+.nuke-screen.flicker { animation: flicker .25s steps(2) 2; }
+.nuke-log { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.nuke-log .r { color: #ff5f57; }
+.nuke-log .cursor { display: inline-block; width: 9px; height: 16px; background: #c8c8c8; vertical-align: -3px; animation: blink 1s step-end infinite; }
+.nuke-joke {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 24px;
+  background: rgba(0, 0, 0, .86);
+  animation: fadein .4s ease;
+}
+.nuke-card {
+  max-width: 480px; text-align: center;
+  border: 1px solid #22324f; border-radius: 8px; background: #0a101c; padding: 32px 28px;
+  box-shadow: 0 0 0 1px rgba(78, 228, 78, .15), 0 20px 60px rgba(0, 0, 0, .6);
+}
+.nuke-card .big { font-size: 44px; line-height: 1; margin-bottom: 12px; }
+.nuke-card h2 { color: #4ee44e; font-size: 24px; margin: 0 0 10px; }
+.nuke-card p { color: #c3d0e6; font-family: var(--sans); font-size: 15px; margin: 0 0 8px; }
+.nuke-card .dim { color: #7d8ea9; font-size: 13px; }
+.nuke-card .btn { margin-top: 16px; }
+@keyframes flicker { 50% { opacity: .2; } }
+@keyframes fadein { from { opacity: 0; } }
