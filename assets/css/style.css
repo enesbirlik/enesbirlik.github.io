@@ -341,7 +341,28 @@ section { padding-block: 88px; }
     var(--panel-2);
   display: grid; place-items: center; padding: 24px; position: relative;
 }
-.now-visual svg { width: 100%; max-width: 340px; height: auto; }
+.now-visual .schematic { width: 100%; max-width: 340px; height: auto; }
+/* URDF viewer (assets/js/so101/); the schematic keeps its space so nothing shifts on load */
+.now-visual.is-3d .schematic { visibility: hidden; }
+.viz { position: absolute; inset: 0; }
+.viz canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.viz canvas:active { cursor: grabbing; }
+.viz-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.viz-overlay circle { stroke: var(--green); stroke-width: 2.2; fill: var(--panel-2); transition: r .15s; }
+.viz-overlay text { fill: var(--green); font-family: var(--mono); font-size: 10px; paint-order: stroke; stroke: var(--panel-2); stroke-width: 3px; stroke-linejoin: round; }
+.viz-overlay .hot circle { r: 9; fill: var(--green-dim); }
+.viz-tip {
+  position: absolute; left: 0; top: 0; margin: -34px 0 0 14px; pointer-events: none; white-space: pre;
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: 3px; padding: 3px 8px;
+}
+.viz-status { position: absolute; top: 12px; right: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--green); }
+.viz-status:empty { display: none; }
+.viz-credit { display: none; position: absolute; top: 12px; left: 14px; font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
+.viz-credit:hover { color: var(--cyan); }
+.now-visual.is-3d .viz-credit { display: block; }
+.now-visual > .fig-label, .viz-status, .viz-credit { z-index: 1; }
+.now-visual > .fig-label { pointer-events: none; }
 .fig-label {
   position: absolute; left: 14px; bottom: 12px;
   font-family: var(--mono); font-size: 11px; color: var(--text-faint); letter-spacing: .06em;

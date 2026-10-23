@@ -24,7 +24,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css?v=4">
+  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <!-- Used by the lazily loaded SO-101 viewer (assets/js/so101/) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+        "urdf-loader": "https://cdn.jsdelivr.net/npm/urdf-loader@0.13.1/src/URDFLoader.js"
+      }
+    }
+  </script>
 
   <script>
     // Apply theme before first paint to avoid a flash
@@ -219,8 +229,9 @@
             </script>
             <div class="progress"><span>progress</span><div class="progress-track"><span id="roadmap-bar" style="width:4%"></span></div><span id="roadmap-pct">0/7</span></div>
           </div>
-          <div class="now-visual" aria-hidden="true">
-            <svg viewBox="0 0 340 300" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <div class="now-visual">
+            <!-- Fallback schematic; hidden by .is-3d once the URDF viewer has loaded -->
+            <svg class="schematic" aria-hidden="true" viewBox="0 0 340 300" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <!-- base -->
               <g stroke="var(--cyan)" stroke-width="2">
                 <rect x="110" y="250" width="120" height="22" rx="3"/>
@@ -254,7 +265,9 @@
               </g>
               <text x="250" y="40" fill="var(--text-faint)" font-family="JetBrains Mono, monospace" font-size="10">6 × STS3215</text>
             </svg>
-            <span class="fig-label">FIG. 00: SO-101 FOLLOWER, SCHEMATIC</span>
+            <span class="fig-label">FIG. 00: SO-101 FOLLOWER</span>
+            <span class="viz-status" id="viz-status" aria-live="polite"></span>
+            <a class="viz-credit" href="https://github.com/TheRobotStudio/SO-ARM100" target="_blank" rel="noopener">URDF © TheRobotStudio · Apache-2.0</a>
           </div>
         </article>
       </div>
@@ -628,7 +641,8 @@
     </div>
   </footer>
 
-  <script src="assets/js/i18n.js?v=4" defer></script>
+  <script src="assets/js/i18n.js?v=5" defer></script>
   <script src="assets/js/main.js?v=4" defer></script>
+  <script src="assets/js/so101/viewer.js?v=5" type="module"></script>
 </body>
 </html>

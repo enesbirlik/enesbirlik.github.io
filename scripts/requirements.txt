@@ -1,0 +1,4 @@
+trimesh==5.1.1
+numpy
+DracoPy==2.2.0
+fast-simplification==0.2.0

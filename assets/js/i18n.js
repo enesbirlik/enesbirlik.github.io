@@ -43,7 +43,7 @@ window.I18N_TR = {
     "SO-101 follower kolunu sıfırdan kurup C++ ros2_control arayüzüyle ROS 2'ye bağlıyorum. Asıl hedef hibrit manipülasyon: basit kısmı klasik kinematik ve MoveIt hızlıca çözsün, hassas kısmı öğrenilmiş bir politika (VLA) üstlensin, ikisini bir Behavior Tree orkestre etsin ve farkı ölçeyim.",
   // Roadmap steps are translated in data/roadmap.json, not here
   "progress": "ilerleme",
-  "FIG. 00: SO-101 FOLLOWER, SCHEMATIC": "ŞEKİL 00: SO-101 FOLLOWER, ŞEMATİK",
+  "FIG. 00: SO-101 FOLLOWER": "ŞEKİL 00: SO-101 FOLLOWER",
 
   // Projects
   "Featured Projects": "Öne Çıkan Projeler",
