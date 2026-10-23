@@ -50,6 +50,7 @@
     });
     langBtn.textContent = lang === "tr" ? "EN" : "TR";
     langBtn.setAttribute("aria-label", lang === "tr" ? "Switch to English" : "Türkçe'ye geç");
+    if (roadmap) renderRoadmap();
   }
 
   var initialLang = null;
@@ -113,12 +114,56 @@
     document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
   }
 
-  /* ---------- Roadmap progress (derived from the list) ---------- */
-  var steps = document.querySelectorAll(".roadmap li");
-  if (steps.length) {
-    var done = document.querySelectorAll(".roadmap li.done").length;
-    document.getElementById("roadmap-bar").style.width = Math.max(4, (done / steps.length) * 100) + "%";
-    document.getElementById("roadmap-pct").textContent = done + "/" + steps.length;
+  /* ---------- Roadmap (data/roadmap.json, embedded copy as fallback) ---------- */
+  // Move this to the SO-101 repo's raw.githubusercontent.com URL once that repo exists.
+  var ROADMAP_URL = "data/roadmap.json";
+  var STEP_WEIGHT = { done: 1, active: 0.5, todo: 0 };
+
+  function validRoadmap(data) {
+    return !!data && Array.isArray(data.steps) && data.steps.length > 0 && data.steps.every(function (s) {
+      return s && s.title && typeof s.title.en === "string" && STEP_WEIGHT.hasOwnProperty(s.status);
+    });
+  }
+
+  function renderRoadmap() {
+    var list = document.getElementById("roadmap");
+    list.textContent = "";
+    var score = 0;
+    roadmap.steps.forEach(function (step) {
+      var li = document.createElement("li");
+      if (step.status !== "todo") li.className = step.status;
+      li.appendChild(document.createTextNode((lang === "tr" && step.title.tr) || step.title.en));
+      if (step.date) {
+        var d = document.createElement("span");
+        d.className = "when";
+        d.textContent = step.date;
+        li.appendChild(d);
+      }
+      list.appendChild(li);
+      score += STEP_WEIGHT[step.status];
+    });
+    var total = roadmap.steps.length;
+    document.getElementById("roadmap-bar").style.width = Math.max(4, (score / total) * 100) + "%";
+    document.getElementById("roadmap-pct").textContent = score + "/" + total;
+    document.getElementById("roadmap-updated").textContent = roadmap.updated
+      ? "· " + (lang === "tr" ? "güncellendi " : "updated ") + roadmap.updated
+      : "";
+  }
+
+  var roadmap = null;
+  try { roadmap = JSON.parse(document.getElementById("roadmap-fallback").textContent); } catch (e) {}
+  if (validRoadmap(roadmap)) renderRoadmap();
+  else roadmap = null;
+
+  if (window.fetch) {
+    fetch(ROADMAP_URL, { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (data) {
+        if (!validRoadmap(data)) throw new Error("invalid roadmap.json");
+        roadmap = data;
+        renderRoadmap();
+      })
+      .catch(function () { /* keep the embedded copy */ });
   }
 
   /* ---------- Lightbox ---------- */

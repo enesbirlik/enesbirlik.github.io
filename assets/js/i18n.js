@@ -39,13 +39,9 @@ window.I18N_TR = {
   "In progress": "Devam ediyor",
   "Personal project · 2026": "Kişisel proje · 2026",
   "SO-101 Follower Arm × ROS2 × Embodied AI": "SO-101 Follower Kol × ROS2 × Embodied AI",
-  "Building an SO-101 follower arm from scratch and integrating it with ROS2, so I can run embodied-AI policies on it: leader–follower teleoperation, demonstration data collection, and learned manipulation policies such as imitation learning and VLA models, on real hardware.":
-    "SO-101 follower kolunu sıfırdan kurup ROS2 ile entegre ediyorum. Amaç, gerçek donanım üzerinde embodied-AI politikaları çalıştırmak: leader–follower teleoperasyon, gösterim verisi toplama ve imitation learning, VLA modelleri gibi öğrenilmiş manipülasyon politikaları.",
-  "Parts & BOM ordered": "Parçalar & BOM sipariş edildi",
-  "Assembly & servo calibration": "Montaj & servo kalibrasyonu",
-  "ros2_control hardware interface + URDF": "ros2_control donanım arayüzü + URDF",
-  "Leader–follower teleop & data collection": "Leader–follower teleop & veri toplama",
-  "Train & deploy embodied-AI policy": "Embodied-AI politikası eğitimi & dağıtımı",
+  "Building an SO-101 follower arm from scratch and bringing it into ROS 2 through a C++ ros2_control interface. The real goal is hybrid manipulation: classical kinematics and MoveIt handle the easy part quickly, a learned policy (VLA) takes over the precise part, a Behavior Tree orchestrates the two, and I measure the difference.":
+    "SO-101 follower kolunu sıfırdan kurup C++ ros2_control arayüzüyle ROS 2'ye bağlıyorum. Asıl hedef hibrit manipülasyon: basit kısmı klasik kinematik ve MoveIt hızlıca çözsün, hassas kısmı öğrenilmiş bir politika (VLA) üstlensin, ikisini bir Behavior Tree orkestre etsin ve farkı ölçeyim.",
+  // Roadmap steps are translated in data/roadmap.json, not here
   "progress": "ilerleme",
   "FIG. 00: SO-101 FOLLOWER, SCHEMATIC": "ŞEKİL 00: SO-101 FOLLOWER, ŞEMATİK",
 
