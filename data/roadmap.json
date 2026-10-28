@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27",
+  "updated": "2026-10-28",
   "steps": [
     { "id": "parts", "title": { "tr": "Parçalar, BOM & 3D baskılar", "en": "Parts, BOM & 3D prints" }, "status": "done" },
     { "id": "assembly", "title": { "tr": "Montaj & ilk motor testi", "en": "Assembly & first motor test" }, "status": "done", "date": "2026-10-25" },
