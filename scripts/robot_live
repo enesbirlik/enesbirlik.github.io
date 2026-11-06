@@ -1,0 +1,55 @@
+#!/bin/sh
+# robot_live on|off|status - stream the SO-101's joint angles to the site's 3D view.
+#
+#   robot_live on       start in the background (uses this shell's ROS_DOMAIN_ID)
+#   robot_live off      stop; the site goes back to its idle animation within 3 s
+#   robot_live status   running or not, and the last log lines
+#
+# Needs the robot's ROS 2 stack running (it reads /joint_states). Linked to ~/.local/bin.
+set -e
+DIR="$(dirname "$(readlink -f "$0")")"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/robot_live"
+PID="$STATE/pid"
+LOG="$STATE/log"
+mkdir -p "$STATE"
+
+running() {
+    [ -f "$PID" ] && kill -0 "$(cat "$PID")" 2>/dev/null
+}
+
+case "$1" in
+    on)
+        if running; then
+            echo "already on (pid $(cat "$PID"), domain ${ROS_DOMAIN_ID:-0})"
+            exit 0
+        fi
+        setsid "$DIR/so101_live.sh" > "$LOG" 2>&1 < /dev/null &
+        echo $! > "$PID"
+        sleep 3
+        if running; then
+            echo "on: streaming /joint_states (ROS_DOMAIN_ID ${ROS_DOMAIN_ID:-0}) to the site. Log: $LOG"
+        else
+            echo "failed to start:"; tail -5 "$LOG"; exit 1
+        fi
+        ;;
+    off)
+        if running; then
+            kill -INT "$(cat "$PID")"   # the bridge marks itself offline on the way out
+            for _ in 1 2 3 4 5; do running || break; sleep 1; done
+            running && kill "$(cat "$PID")"
+            rm -f "$PID"
+            echo "off"
+        else
+            rm -f "$PID"
+            echo "already off"
+        fi
+        ;;
+    status)
+        if running; then echo "on (pid $(cat "$PID"))"; else echo "off"; fi
+        [ -f "$LOG" ] && tail -2 "$LOG"
+        ;;
+    *)
+        echo "usage: robot_live on|off|status"
+        exit 2
+        ;;
+esac

@@ -43,14 +43,19 @@ Replay recordings should go in `data/replays/` (format sketched in `sources.js`)
 While I work with the robot, the 3D view can show the real arm. Nothing is sent otherwise.
 
 ```sh
-scripts/so101_live.sh      # Ctrl+C stops; needs the robot's ROS 2 stack (/joint_states)
+robot_live on       # in the background, with this shell's ROS_DOMAIN_ID; needs /joint_states
+robot_live off      # the site goes back to its idle animation within 3 s
+robot_live status
 ```
+
+`scripts/so101_live.sh` runs the same in the foreground (Ctrl+C stops).
 
 One-time setup, no sudo:
 
 ```sh
 python3 -m venv --system-site-packages ~/.venvs/so101-live
 ~/.venvs/so101-live/bin/pip install paho-mqtt
+ln -s "$PWD/scripts/robot_live" ~/.local/bin/robot_live
 ```
 
 **Path of the data:** `scripts/so101_live_bridge.py` reads `/joint_states` and publishes `{"t", "q": {joint: rad}}` at 10 Hz to the public HiveMQ broker (`broker.hivemq.com`), topic `enesbirlik/so101/live/v1/joints`.
