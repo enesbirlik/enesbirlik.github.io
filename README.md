@@ -38,6 +38,33 @@ with `prefers-reduced-motion`, or if anything fails to load, the SVG schematic s
 
 Replay recordings should go in `data/replays/` (format sketched in `sources.js`).
 
+### Live robot
+
+While I work with the robot, the 3D view can show the real arm. Nothing is sent otherwise.
+
+```sh
+scripts/so101_live.sh      # Ctrl+C stops; needs the robot's ROS 2 stack (/joint_states)
+```
+
+One-time setup, no sudo:
+
+```sh
+python3 -m venv --system-site-packages ~/.venvs/so101-live
+~/.venvs/so101-live/bin/pip install paho-mqtt
+```
+
+**Path of the data:** `scripts/so101_live_bridge.py` reads `/joint_states` and publishes `{"t", "q": {joint: rad}}` at 10 Hz to the public HiveMQ broker (`broker.hivemq.com`), topic `enesbirlik/so101/live/v1/joints`.
+
+- `…/status` is retained: `online`, or `offline`, which is also the last will.
+- While the card is on screen, `watchLive()` in `sources.js` subscribes read-only over `wss://broker.hivemq.com:8884/mqtt` (mqtt.js from jsDelivr).
+- When messages arrive, the view switches to the eased live source and shows "● LIVE". After 3 s without one, it goes back to the idle sway.
+
+**The broker is public.** Anyone can read these topics, and anyone can write to them. The page therefore accepts only the known joint names with finite values under 3.2 rad.
+
+**Tested on 2026-11-06** with a fake `/joint_states`:
+- 10 msg/s arrived over WSS, about 50 ms after they were sent.
+- Headless Chrome showed "● LIVE" on the local site, and went back to idle 3 s after the bridge stopped.
+
 ### Regenerating the model
 
 The URDF and meshes in `assets/so101/` come from
